@@ -65,6 +65,6 @@ for page in list_page.linkedPages(
         parsed_text.insert(0, '{{Convert to Episode table}}')
 
     page.text = str(parsed_text)
-    page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 3, TRIAL)', minor=True, bot=True)
+    page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 3)', minor=True, bot=True)
 
     page_count += 1
