@@ -9,7 +9,7 @@ site = pywikibot.Site('en', 'wikipedia')
 list_page = pywikibot.Page(site, 'User:Alex 21/sandbox/No episode table')
 
 PAGE_LIMIT = 50
-DRY_RUN = True
+DRY_RUN = False
 
 page_count = 0
 
