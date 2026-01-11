@@ -8,7 +8,7 @@ site = pywikibot.Site('en', 'wikipedia')
 
 list_page = pywikibot.Page(site, 'User:Alex 21/sandbox/No episode table')
 
-PAGE_LIMIT = -1
+PAGE_LIMIT = 50
 
 page_count = 0
 
@@ -65,6 +65,6 @@ for page in list_page.linkedPages(
         parsed_text.insert(0, '{{Convert to Episode table}}')
 
     page.text = str(parsed_text)
-    page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 3)', minor=True, bot=True)
+    page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 4 trial)', minor=True, bot=True)
 
     page_count += 1
