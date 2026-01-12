@@ -215,3 +215,6 @@ logs/
 user-password.py
 user-password.cfg
 **/pywikibot*.lwp
+
+# debug directory
+**/out/

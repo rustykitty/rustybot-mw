@@ -10,6 +10,7 @@ list_page = pywikibot.Page(site, 'User:Alex 21/sandbox/No episode table')
 
 PAGE_LIMIT = 50
 DRY_RUN = False
+WRITE_CHANGES_TO_FILE = False
 
 TAG_STR = "{{Convert to Episode table}}\n"
 
@@ -68,8 +69,16 @@ for page in list_page.linkedPages(
         parsed_text.insert(0, TAG_STR)
 
     page.text = str(parsed_text)
-    if DRY_RUN:
-        print("Would have saved ", page.title())
+    if WRITE_CHANGES_TO_FILE:
+        print("Writing", page.title(), "to file")
+        try:
+            file = open(os.path.join(os.path.dirname(__file__), "out", page.title(underscore=True, as_filename=True)), "w")
+            file.write(page.text)
+            file.close()
+        except OSError as e:
+            print("Error saving file:", e)
+    elif DRY_RUN:
+        print("Would have saved", page.title())
     else: 
         page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 4 trial)', minor=True, bot=True)
 
