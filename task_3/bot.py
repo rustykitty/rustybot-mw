@@ -11,6 +11,8 @@ list_page = pywikibot.Page(site, 'User:Alex 21/sandbox/No episode table')
 PAGE_LIMIT = 50
 DRY_RUN = False
 
+TAG_STR = "{{Convert to Episode table}}\n"
+
 page_count = 0
 
 def index_or_none(a, b):
@@ -43,27 +45,27 @@ for page in list_page.linkedPages(
     
     parsed_text = mwparserfromhell.parse(page.text)
     if (m := next((t for t in parsed_text.ifilter_templates() if t.name.lower() == 'multiple issues'), None)):
-        m.get('1').value.append('{{Convert to Episode table}}')
+        m.get('1').value.append(TAG_STR)
     # After hatnote, if present
     elif (m := next((t.name.lower() in hatnote_templates for t in parsed_text.ifilter_templates()), None)):
-        parsed_text.insert_after(m, '{{Convert to Episode table}}')
+        parsed_text.insert_after(m, TAG_STR)
     # After DISPLAYTITLE, if present
     elif (m := next(
             (t 
             for t in parsed_text.ifilter_templates() if (t.name.lower() in ('displaytitle', 'italic title', 'lowercase title'))
     ), None)):
-        parsed_text.insert_after(m, '{{Convert to Episode table}}')
+        parsed_text.insert_after(m, TAG_STR)
     # Before English variety / date format, if present
     elif (m := next(
             (t
             for t in parsed_text.ifilter_templates()
             if (re.search(r'[u]se [dmy]{3} dates|[u]se [W][w]+ English', t.name.lower()))), None)):
-        parsed_text.insert_before(m, '{{Convert to Episode table}}')
+        parsed_text.insert_before(m, TAG_STR)
     # After short description, if present
     elif (m := next((t for t in parsed_text.ifilter_templates() if t.name.lower() == 'short description'), None)):
-        parsed_text.insert_after(m, '{{Convert to Episode table}}')
+        parsed_text.insert_after(m, TAG_STR)
     else:
-        parsed_text.insert(0, '{{Convert to Episode table}}')
+        parsed_text.insert(0, TAG_STR)
 
     page.text = str(parsed_text)
     if DRY_RUN:
