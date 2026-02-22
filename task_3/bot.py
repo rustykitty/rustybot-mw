@@ -80,6 +80,6 @@ for page in list_page.linkedPages(
     elif DRY_RUN:
         print("Would have saved", page.title())
     else: 
-        page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 4 trial)', minor=True, bot=True)
+        page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 4)', minor=True, bot=True)
 
     page_count += 1
