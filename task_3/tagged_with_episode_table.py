@@ -33,7 +33,7 @@ f"""The following is a list of pages transcluding both {{{{tl|Convert to Episode
 
 Last updated ~~~~~.
 
-{'\n'.join(f"*[[{page}]]" for page in tagged_with_table)}
+{'\n'.join(f"#[[{page}]]" for page in tagged_with_table)}
 """
 
 if WRITE_TO_FILE:
