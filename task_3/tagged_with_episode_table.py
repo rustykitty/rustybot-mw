@@ -15,19 +15,14 @@ TAG_STR = "{{Convert to Episode table}}\n"
 
 tagged_with_table = set()
 
-#for page in list_page.linkedPages(
-#    namespaces=[0], follow_redirects=True, content=True, total=None
-#    ):
-
 pages = list(template_page.getReferences(only_template_inclusion=True))
 
 for page in pages:
-
     page: pywikibot.Page
 
     templates = tuple(page.title(with_ns=False) for page in page.itertemplates())
 
-    if "Convert to Episode table" in templates and "Episode table" in templates:
+    if "Episode table" in templates:
         print("added", page.title())
         tagged_with_table.add(page.title())
 
