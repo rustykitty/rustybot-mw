@@ -9,7 +9,7 @@ site = pywikibot.Site('en', 'wikipedia')
 list_page = pywikibot.Page(site, 'User:Alex 21/sandbox/No episode table')
 
 PAGE_LIMIT = -1
-DRY_RUN = False
+DRY_RUN = True
 WRITE_CHANGES_TO_FILE = False
 
 TAG_STR = "{{Convert to Episode table}}\n"
@@ -24,14 +24,38 @@ def index_or_none(a, b):
 
 hatnote_templates = open(os.path.join(os.path.dirname(__file__), 'hatnote_templates.txt')).read().rstrip().split('\n')
 
+# get all of our contrib pages
+user = pywikibot.User(site, "RustyBot")
+contribs: set[str] = {
+    page.title() 
+    for (page, id, ts, comment) in user.contributions(None, namespaces=[0], showMinor=True)
+    if "Task 3" in comment or "Task 4" in comment
+}
+
+previously_tagged = []
+has_episode_table = []
+
 for page in list_page.linkedPages(
     namespaces=[0], follow_redirects=True, content=True, total=None
     ):
 
-    templates = page.templates()
+    templates = tuple((page.title(with_ns=False) for page in page.templates()))
 
-    if "Convert to Episode table" in (page.title(with_ns=False) for page in templates):
+    title: str = page.title()
+
+    if "Convert to Episode table" in templates:
         print('Already tagged')
+        continue
+    skip = False
+    if title in previously_tagged:
+        print("Page was tagged in the past, but is now untagged")
+        previously_tagged.append(title)
+        skip = True
+    elif "Episode table" in templates:
+        print("already using episode table")
+        has_episode_table.append(title)
+        skip = True
+    if skip:
         continue
 
     if PAGE_LIMIT > 0 and page_count >= PAGE_LIMIT:
@@ -70,7 +94,7 @@ for page in list_page.linkedPages(
 
     page.text = str(parsed_text)
     if WRITE_CHANGES_TO_FILE:
-        print("Writing", page.title(), "to file")
+        print("Writing", title, "to file")
         try:
             file = open(os.path.join(os.path.dirname(__file__), "out", page.title(underscore=True, as_filename=True)), "w")
             file.write(page.text)
@@ -78,8 +102,24 @@ for page in list_page.linkedPages(
         except OSError as e:
             print("Error saving file:", e)
     elif DRY_RUN:
-        print("Would have saved", page.title())
+        print("Would have saved", title)
     else: 
         page.save(summary='Tagging page with {{[[Template:Convert to Episode table|Convert to Episode table]]}} (Task 4)', minor=True, bot=True)
 
     page_count += 1
+
+page = pywikibot.Page(site, "User:RustyBot/Episode table manual review")
+page.text = f"""
+List of pages on the bot run that may require manual review.
+The following lists are not mutually exclusive; there may be pages on more than one list.
+Last updated ~~~~~ by ~~~.
+
+== Tagged previously ==
+The following is a list of pages that were tagged with {{{{tl|Convert to Episode table}}}} in the past.
+{'\n'.join(f"#[[{page}]]" for page in has_episode_table)}
+
+== Both templates ==
+The following is a list of pages transcluding {{{{tl|Episode table}}}}.
+{'\n'.join(f"#[[{page}]]" for page in has_episode_table)}
+"""
+page.save()
